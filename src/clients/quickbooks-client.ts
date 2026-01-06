@@ -7,15 +7,17 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import open from 'open';
 
-dotenv.config();
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.join(__dirname, '..', '..', '.env');
+
+// Load .env from the correct location (relative to this script, not CWD)
+dotenv.config({ path: envPath });
 const client_id = process.env.QUICKBOOKS_CLIENT_ID;
 const client_secret = process.env.QUICKBOOKS_CLIENT_SECRET;
 const refresh_token = process.env.QUICKBOOKS_REFRESH_TOKEN;
 const realm_id = process.env.QUICKBOOKS_REALM_ID;
 const environment = process.env.QUICKBOOKS_ENVIRONMENT || 'sandbox';
-const redirect_uri = 'http://localhost:8000/callback';
+const redirect_uri = process.env.QUICKBOOKS_REDIRECTURI || 'http://localhost:8000/callback';
 
 // Only throw error if client_id or client_secret is missing
 if (!client_id || !client_secret || !redirect_uri) {
@@ -153,8 +155,7 @@ class QuickbooksClient {
   }
 
   private saveTokensToEnv(): void {
-    const tokenPath = path.join(__dirname, '..', '..', '.env');
-    const envContent = fs.readFileSync(tokenPath, 'utf-8');
+    const envContent = fs.readFileSync(envPath, 'utf-8');
     const envLines = envContent.split('\n');
     
     const updateEnvVar = (name: string, value: string) => {
@@ -169,7 +170,7 @@ class QuickbooksClient {
     if (this.refreshToken) updateEnvVar('QUICKBOOKS_REFRESH_TOKEN', this.refreshToken);
     if (this.realmId) updateEnvVar('QUICKBOOKS_REALM_ID', this.realmId);
 
-    fs.writeFileSync(tokenPath, envLines.join('\n'));
+    fs.writeFileSync(envPath, envLines.join('\n'));
   }
 
   async refreshAccessToken() {
