@@ -18,10 +18,10 @@
       "auth": "node dist/auth-server.js"
     },
     "dependencies": {
-      "@modelcontextprotocol/sdk": "^1.6.0",
+      "@modelcontextprotocol/sdk": "^1.32.0",
       "dotenv": "^16.4.7",
       "intuit-oauth": "^4.0.0",
-      "node-quickbooks": "^2.0.43",
+      "node-quickbooks": "^2.0.50",
       "open": "^9.1.0",
       "zod": "^3.24.2"
     },
